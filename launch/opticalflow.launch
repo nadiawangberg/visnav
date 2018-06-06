@@ -1,0 +1,22 @@
+<!-- Image Processor Launch file -->
+<launch>
+        <node pkg="visnav" type="opticalflow_node" name="opticalflow_node" output="screen" respawn="true" />
+        <!--      Loop rate for main landing node                   -->
+        <param name="loop_rate"  type="double" value="10.0" />
+        <param name="visnav_do_wait_for_nav"  type="bool" value="false" />
+        
+        <!--				Input Topics							-->
+        <param name="image_topic" type="str" value="/camera/image_raw" />
+        
+        <!--				Output Topics							-->
+        <param name="output_image"         type="str" value="/opflow/image_detection" />
+        <param name="output_displacement"  type="str" value="/opflow/displacement" />
+        
+        <!--		Navigation Settings											-->
+        <param name="navigation_localpos_topic"  type="str" value="/mavros/local_position/pose" />
+        <param name="navigation_globalpos_topic" type="str" value="/mavros/global_position/global" />
+        <param name="navigation_velocity_topic"  type="str" value="/mavros/local_position/velocity" />
+        <param name="navigation_atitude_topic"   type="str" value="/mavros/imu/data" />
+        <param name="navigation_altitude_topic"  type="str" value="/mavros/vfr_hud" />
+        
+</launch>
