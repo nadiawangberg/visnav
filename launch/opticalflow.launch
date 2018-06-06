@@ -9,8 +9,7 @@
         <param name="image_topic" type="str" value="/camera/image_raw" />
         
         <!--				Output Topics							-->
-        <param name="output_image"         type="str" value="/opflow/image_detection" />
-        <param name="output_displacement"  type="str" value="/opflow/displacement" />
+        <param name="output_image"         type="str" value="/visnav/image_output" />
         
         <!--		Navigation Settings											-->
         <param name="navigation_localpos_topic"  type="str" value="/mavros/local_position/pose" />

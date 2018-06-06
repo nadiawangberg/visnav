@@ -5,7 +5,7 @@
         <param name="loop_rate"  type="double" value="100.0" />
         
         <!--				Input Topics							-->
-        <param name="imagesaver_image_topic" type="str" value="/visnav/aruco_track" />
+        <param name="imagesaver_image_topic" type="str" value="/visnav/image_output" />
         
         <!--				Output Name							-->
         <param name="output_path"         type="str" value="/home/lsi/pictures/picture_" />

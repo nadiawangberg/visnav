@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 	INCLUDE_DIRS include
 	LIBRARIES visnav
-	CATKIN_DEPENDS roscpp solo_lib geometry_msgs mavros_msgs cv_bridge
+	CATKIN_DEPENDS roscpp geometry_msgs mavros_msgs cv_bridge
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )
