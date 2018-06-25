@@ -17,5 +17,7 @@
         <param name="navigation_velocity_topic"  type="str" value="/mavros/local_position/velocity" />
         <param name="navigation_atitude_topic"   type="str" value="/mavros/imu/data" />
         <param name="navigation_altitude_topic"  type="str" value="/mavros/vfr_hud" />
+
+        <node pkg="visnav" type="pose_visualisation_node" name="pose_visualisation_node" output="screen" respawn="true" />
         
 </launch>

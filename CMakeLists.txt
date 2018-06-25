@@ -54,6 +54,9 @@ target_link_libraries(opticalflow_node ${PROJECT_NAME})
 add_executable(imagesave_node src/imagesave_node.cpp)
 target_link_libraries(imagesave_node ${PROJECT_NAME})
 
+add_executable(pose_visualisation_node src/pose_visualisation_node.cpp)
+target_link_libraries(pose_visualisation_node ${PROJECT_NAME})
+
 
 
 find_package(OpenMP)
