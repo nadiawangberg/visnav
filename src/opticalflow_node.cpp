@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 	
 	
 	std::string outputImageTopic;
-	ros::param::param<std::string>("output_image", outputImageTopic, "/visnav/processed_image");
+	ros::param::param<std::string>("output_image", outputImageTopic, "/visnav/image_output");
 	ros::Publisher outputImagePub = nH.advertise<sensor_msgs::Image>(outputImageTopic, 1);
 	
 	//Navigation object
@@ -156,15 +156,71 @@ int main(int argc, char** argv) {
 		
 		cv_bridge::CvImagePtr image = imageLoader.getImage();
 		
-		visualizer.update(image->image);
-		
+		//visualizer.update(image->image);
+
+
+        /*
+        * Calibrate fisheye lens
+        */
+
+        cv::Mat frame = imageLoader.getImageMatrix(CV_8UC1);
+
+        //DIM=(640, 480)
+        //K=np.array([[338.1202749256424, 0.0, 278.594296413926], [0.0, 339.17124053097086, 207.64080164237097], [0.0, 0.0, 1.0]])
+        //D=np.array([[0.0009507706696473223], [-0.027619038157897017], [0.04213022793571351], [-0.027907063457939283]])
+
+
+
+
+
+        double k[3][3] = {{338.1202749256424, 0.0, 278.594296413926}, {0.0, 339.17124053097086, 207.64080164237097}, {0.0, 0.0, 1.0}}; // {{1076.543468167208, 0.0, 1167.7716020958378}, {0.0, 1081.9606511410773, 750.3661271924599}, {0.0, 0.0, 1.0}}
+        cv::Mat K = cv::Mat(3, 3, CV_64F, k);
+
+        double d[4][1] = {{0.0009507706696473223}, {-0.027619038157897017}, {0.04213022793571351}, {0.04213022793571351}}; // {{0.009836379664666049}, {-0.11230683007485048}, {0.19011424710630012}, {-0.045414305375157206}};
+        cv::Mat D = cv::Mat(4, 1, CV_64F, d);
+
+        cv::Size DIM = cv::Size(640, 480);
+
+        cv::Mat map1, map2; // output matrices
+
+        cv::fisheye::initUndistortRectifyMap(K, D, cv::Mat(), K, DIM, CV_16SC2, map1, map2); // cv::Mat::eye could be replaced with cv::Mat::eye(3,3, CV_8U)
+
+        cv::Mat undistorted_frame(map1.rows, map1.cols, CV_8UC1);
+
+        cv::remap(frame, undistorted_frame, map1, map2, cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar());
+
+        // undistorted frame must have same size and type as map1
+
+        visualizer.update(undistorted_frame);
+        //cv::Mat diff = frame != undistorted_frame; // Equal if no elements disagree
+        //bool eq = cv::countNonZero(diff) == 0;
+
+        ROS_INFO("map1 (row) : %i", map1.rows);
+        ROS_INFO("map1 (col) : %i", map1.cols);
+        ROS_INFO("undist (row) : %i", undistorted_frame.rows);
+        ROS_INFO("undist (col) : %i", undistorted_frame.cols);
+        ROS_INFO("frame (row) : %i", frame.rows);
+        ROS_INFO("frame (col) : %i", frame.cols);
+
+
+        ROS_INFO("type of undist: %i", undistorted_frame.type());
+        ROS_INFO("type of frame: %i", frame.type());
+
+
+        ROS_INFO("frame and undist should have same type. map1 and frame should have same size");
+
+
+        //cv::imshow( "undistorted", undistorted_frame);
+        //cv::waitKey(0);
+        //cv::destroyAllWindows();
+        //ROS_INFO("HEEEEEEEEEEEEEELLLOOOOOOOOOOO");
 		
 		
 		/*
 		 * 	Run optical flow
 		 */
 		
-		opticalFlowSparse.updateWithNewImage(imageLoader.getImageMatrix(CV_8UC1));
+		opticalFlowSparse.updateWithNewImage(undistorted_frame);
  		ROS_INFO("OPFLOW: Steps %i , track success: %f", opticalFlowSparse.getStepCounter(), opticalFlowSparse.getTrackSuccessRatio());
 		
 		/*

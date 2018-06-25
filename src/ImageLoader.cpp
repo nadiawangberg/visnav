@@ -63,7 +63,7 @@ void ImageLoader::imageCallbackSave(const sensor_msgs::Image& msg) {
 		
 		
 		std::stringstream sstream;                              
-		sstream << m_outputPath << std::setfill('0') << std::setw(6) << m_imageCount << ".png" ;                 
+		sstream << m_outputPath << std::setfill('0') << std::setw(6) << m_imageCount << ".jpg" ;
 		
 		cv::imwrite( sstream.str(),  m_image->image );    
 		

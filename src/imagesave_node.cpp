@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 	
 	ROS_INFO("Image width:  %i ", imageWidth);
 	ROS_INFO("Image height: %i ", imageHeight);
-	
+
 	
 	ROS_INFO("IMAGESAVE: Image saver node is up and running");
  

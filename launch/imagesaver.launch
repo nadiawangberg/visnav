@@ -2,13 +2,13 @@
 <launch>
         <node pkg="visnav" type="imagesave_node" name="imagesave_node" output="screen" respawn="true" />
         <!--      Loop rate for main landing node                   -->
-        <param name="loop_rate"  type="double" value="100.0" />
+        <param name="img_loop_rate"  type="double" value="2.0" />
         
         <!--				Input Topics							-->
-        <param name="imagesaver_image_topic" type="str" value="/visnav/image_output" />
+        <param name="imagesaver_image_topic" type="str" value="/camera/image_raw" />
         
         <!--				Output Name							-->
-        <param name="output_path"         type="str" value="/home/lsi/pictures/picture_" />
+        <param name="output_path"         type="str" value="/home/bjornmam/pictures/picture_" />
 
 
         <!-- 				Settings 							-->
