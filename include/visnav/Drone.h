@@ -9,8 +9,9 @@ private:
 	double roll;
 	double pitch;
 	double yaw;
+	cv::Mat K;
 
 public:
-	Drone();
-	void findPose();
-}
+	Drone(double** k);
+	void findPose(std::vector<cv::Point2f> prevPts, std::vector<cv::Point2f> nextPts);
+};

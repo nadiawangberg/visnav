@@ -30,6 +30,7 @@ set(VisNav_Ros_SRC
 	include/visnav/Navigation.h
 	include/visnav/OpticalFlowSparse.h
 	include/visnav/Visualizer.h
+	include/visnav/Drone.h
 
 	src/ColorManager.cpp
 	src/PixelPoint.cpp
@@ -37,6 +38,7 @@ set(VisNav_Ros_SRC
 	src/Navigation.cpp
 	src/OpticalFlowSparse.cpp
 	src/Visualizer.cpp
+	src/Drone.cpp
 )
 
 
