@@ -23,6 +23,7 @@ public:
 	~Navigator();
 	
 	bool checkNavigationStatus();
+	void updatePose();
 	
 	double getLatitude() const;
 	double getLongitude() const;
@@ -54,17 +55,20 @@ private:
 	bool m_hasAltitude;
 	bool m_hasAtitude;
 	
+	//position
 	double m_latitude;
 	double m_longitude;
 	double m_altitude;
+
+	//speed
 	double m_velE;
 	double m_velN;
 	double m_velU;
+
+	//angle
 	double m_roll;
 	double m_pitch;
-	double m_yaw;
-// 	
-	
+	double m_yaw;	
 	
 };
 
