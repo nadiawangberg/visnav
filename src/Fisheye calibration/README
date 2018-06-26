@@ -1,0 +1,17 @@
+---Calibration of fisheye camera---
+
+Run script calibrate.py in a folder with many (40?) .jpg pictures taken with the fisheye camera to be calibrated. These images must all be the same size. If everything goes smoothly the script will print out something like this: 
+
+Found 36 images for calibration
+DIM=(1600, 1200)
+K=np.array([[781.3524863867165, 0.0, 794.7118000552183], [0.0, 779.5071163774452, 561.3314451453386], [0.0, 0.0, 1.0]])
+D=np.array([[-0.042595202508066574], [0.031307765215775184], [-0.04104704724832258], [0.015343014605793324]])
+
+K : intrinsic camera calibration matrix
+D : uhh... it's used for calibration either way!
+
+These can be used to undistort image using OpenCV functions like initUndistortRectifyMap() and remap()
+
+
+More indept documentation on page
+https://medium.com/@kennethjiang/calibrate-fisheye-lens-using-opencv-333b05afa0b0
