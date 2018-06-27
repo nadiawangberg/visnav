@@ -25,6 +25,9 @@ namespace vis_nav {
 		
 		double getTrackSuccessRatio() const {return m_trackSuccessRatio;}
 		int getStepCounter() const {return m_stepCounter;}
+
+		std::vector<cv::Point2f> getPrevFeatures() const {return m_featuresLast;}
+		std::vector<cv::Point2f> getNextFeatures() const {return m_featuresNext;}
 		
 	private:
 		

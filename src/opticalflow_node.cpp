@@ -11,6 +11,7 @@
 #include <visnav/ImageLoader.h>
 #include <visnav/Navigation.h>
 #include <visnav/OpticalFlowSparse.h>
+#include <visnav/CameraPose.h>
 
 #include <visnav/Visualizer.h>
 #include <visnav/ColorManager.h>
@@ -125,9 +126,22 @@ int main(int argc, char** argv) {
 	double minTrackSuccessRate = 0.8;
 	ros::param::param<double>("opflow_track_success_rate", minTrackSuccessRate, 0.80);
 	
+
+	// Fisheye calibration matricies
+	double k[3][3] = {{338.1202749256424, 0.0, 278.594296413926}, {0.0, 339.17124053097086, 207.64080164237097}, {0.0, 0.0, 1.0}};
+	double d[4][1] = {{0.0009507706696473223}, {-0.027619038157897017}, {0.04213022793571351}, {0.04213022793571351}};
+	cv::Size dim = cv::Size(640, 480);
 	//Optical Flow object
 	vis_nav::OpticalFlowSparse opticalFlowSparse( resetCount,  numFeatures,  featureQuality ,  minDistance ,  minTrackSuccessRate );
 	
+	//Camera and calibration
+	CameraPose camera(k, d, dim);
+	cv::Mat map1, map2;
+
+	ROS_INFO("HEEEEEEEEEEEEEELLLOOOOOOOOOOO");
+	ROS_INFO("focal: %f", camera.getFocal());
+	ROS_INFO("pp x: %f", camera.getpp().x);
+	ROS_INFO("pp y: %f", camera.getpp().y);
 	
 	/*
 	 * 		Setting up Visualizer
@@ -158,63 +172,20 @@ int main(int argc, char** argv) {
 		
 		//visualizer.update(image->image);
 
+		cv::Mat frame = imageLoader.getImageMatrix(CV_8UC1);
 
         /*
         * Calibrate fisheye lens
         */
 
-        cv::Mat frame = imageLoader.getImageMatrix(CV_8UC1);
-
-        //DIM=(640, 480)
-        //K=np.array([[338.1202749256424, 0.0, 278.594296413926], [0.0, 339.17124053097086, 207.64080164237097], [0.0, 0.0, 1.0]])
-        //D=np.array([[0.0009507706696473223], [-0.027619038157897017], [0.04213022793571351], [-0.027907063457939283]])
-
-
-
-
-
-        double k[3][3] = {{338.1202749256424, 0.0, 278.594296413926}, {0.0, 339.17124053097086, 207.64080164237097}, {0.0, 0.0, 1.0}}; // {{1076.543468167208, 0.0, 1167.7716020958378}, {0.0, 1081.9606511410773, 750.3661271924599}, {0.0, 0.0, 1.0}}
-        cv::Mat K = cv::Mat(3, 3, CV_64F, k);
-
-        double d[4][1] = {{0.0009507706696473223}, {-0.027619038157897017}, {0.04213022793571351}, {0.04213022793571351}}; // {{0.009836379664666049}, {-0.11230683007485048}, {0.19011424710630012}, {-0.045414305375157206}};
-        cv::Mat D = cv::Mat(4, 1, CV_64F, d);
-
-        cv::Size DIM = cv::Size(640, 480);
-
-        cv::Mat map1, map2; // output matrices
-
-        cv::fisheye::initUndistortRectifyMap(K, D, cv::Mat(), K, DIM, CV_16SC2, map1, map2); // cv::Mat::eye could be replaced with cv::Mat::eye(3,3, CV_8U)
+        cv::fisheye::initUndistortRectifyMap(camera.getK(), camera.getD(), cv::Mat(), camera.getK(), camera.getDIM(), CV_16SC2, map1, map2);
 
         cv::Mat undistorted_frame(map1.rows, map1.cols, CV_8UC1);
 
         cv::remap(frame, undistorted_frame, map1, map2, cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar());
 
-        // undistorted frame must have same size and type as map1
-
         visualizer.update(undistorted_frame);
-        //cv::Mat diff = frame != undistorted_frame; // Equal if no elements disagree
-        //bool eq = cv::countNonZero(diff) == 0;
 
-        ROS_INFO("map1 (row) : %i", map1.rows);
-        ROS_INFO("map1 (col) : %i", map1.cols);
-        ROS_INFO("undist (row) : %i", undistorted_frame.rows);
-        ROS_INFO("undist (col) : %i", undistorted_frame.cols);
-        ROS_INFO("frame (row) : %i", frame.rows);
-        ROS_INFO("frame (col) : %i", frame.cols);
-
-
-        ROS_INFO("type of undist: %i", undistorted_frame.type());
-        ROS_INFO("type of frame: %i", frame.type());
-
-
-        ROS_INFO("frame and undist should have same type. map1 and frame should have same size");
-
-
-        //cv::imshow( "undistorted", undistorted_frame);
-        //cv::waitKey(0);
-        //cv::destroyAllWindows();
-        //ROS_INFO("HEEEEEEEEEEEEEELLLOOOOOOOOOOO");
-		
 		
 		/*
 		 * 	Run optical flow
@@ -223,6 +194,15 @@ int main(int argc, char** argv) {
 		opticalFlowSparse.updateWithNewImage(undistorted_frame);
  		ROS_INFO("OPFLOW: Steps %i , track success: %f", opticalFlowSparse.getStepCounter(), opticalFlowSparse.getTrackSuccessRatio());
 		
+
+
+ 		int siiize = opticalFlowSparse.getNextFeatures().size();
+		ROS_INFO("SIZE!!!: %i", siiize);
+
+		if (opticalFlowSparse.getNextFeatures().size() >= 4) {
+			camera.updatePose(opticalFlowSparse.getPrevFeatures(), opticalFlowSparse.getNextFeatures());
+		}
+
 		/*
 		 * 	Draw optical flow 
 		 */
