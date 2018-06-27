@@ -196,8 +196,8 @@ int main(int argc, char** argv) {
 		
 
 
- 		int siiize = opticalFlowSparse.getNextFeatures().size();
-		ROS_INFO("SIZE!!!: %i", siiize);
+ 		//int siiize = opticalFlowSparse.getNextFeatures().size();
+		//ROS_INFO("SIZE!!!: %i", siiize);
 
 		if (opticalFlowSparse.getNextFeatures().size() >= 4) {
 			camera.updatePose(opticalFlowSparse.getPrevFeatures(), opticalFlowSparse.getNextFeatures());
