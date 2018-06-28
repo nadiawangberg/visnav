@@ -23,16 +23,16 @@
 #include "opencv2/calib3d/calib3d.hpp"
 
 #include "ros/ros.h"
-
 #include "geometry_msgs/Point.h"
 #include <cv_bridge/cv_bridge.h>
 
 #include <sstream>
 
 int i = 70;
-uint seq;
+int speed = 2;
 cv::Mat map;
 int imageWidth, imageHeight = 600;
+cv::Point pos = cv::Point(imageWidth / 2, imageHeight / 2);
 vis_nav::Visualizer vis(imageWidth, imageHeight, true);
 std::string outputImageTopic;
 ros::Publisher outputImagePub;
