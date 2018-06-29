@@ -179,31 +179,31 @@ int main(int argc, char** argv) {
         double d[4][1] = {{0.0009507706696473223}, {-0.027619038157897017}, {0.04213022793571351}, {0.04213022793571351}}; // {{0.009836379664666049}, {-0.11230683007485048}, {0.19011424710630012}, {-0.045414305375157206}};
         cv::Mat D = cv::Mat(4, 1, CV_64F, d);
 
-        cv::Size DIM = cv::Size(640, 480);
+        //cv::Size DIM = cv::Size(640, 480);
 
-        cv::Mat map1, map2; // output matrices
+        //cv::Mat map1, map2; // output matrices
 
-        cv::fisheye::initUndistortRectifyMap(K, D, cv::Mat(), K, DIM, CV_16SC2, map1, map2); // cv::Mat::eye could be replaced with cv::Mat::eye(3,3, CV_8U)
+        //cv::fisheye::initUndistortRectifyMap(K, D, cv::Mat(), K, DIM, CV_16SC2, map1, map2); // cv::Mat::eye could be replaced with cv::Mat::eye(3,3, CV_8U)
 
-        cv::Mat undistorted_frame(map1.rows, map1.cols, CV_8UC1);
+        //cv::Mat undistorted_frame(map1.rows, map1.cols, CV_8UC1);
 
-        cv::remap(frame, undistorted_frame, map1, map2, cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar());
+        //cv::remap(frame, undistorted_frame, map1, map2, cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar());
 
         // undistorted frame must have same size and type as map1
 
-        visualizer.update(undistorted_frame);
+        visualizer.update(frame);
         //cv::Mat diff = frame != undistorted_frame; // Equal if no elements disagree
         //bool eq = cv::countNonZero(diff) == 0;
 
-        ROS_INFO("map1 (row) : %i", map1.rows);
-        ROS_INFO("map1 (col) : %i", map1.cols);
-        ROS_INFO("undist (row) : %i", undistorted_frame.rows);
-        ROS_INFO("undist (col) : %i", undistorted_frame.cols);
+        //ROS_INFO("map1 (row) : %i", map1.rows);
+        //ROS_INFO("map1 (col) : %i", map1.cols);
+        //ROS_INFO("undist (row) : %i", undistorted_frame.rows);
+        //ROS_INFO("undist (col) : %i", undistorted_frame.cols);
         ROS_INFO("frame (row) : %i", frame.rows);
         ROS_INFO("frame (col) : %i", frame.cols);
 
 
-        ROS_INFO("type of undist: %i", undistorted_frame.type());
+       // ROS_INFO("type of undist: %i", undistorted_frame.type());
         ROS_INFO("type of frame: %i", frame.type());
 
 
@@ -220,7 +220,7 @@ int main(int argc, char** argv) {
 		 * 	Run optical flow
 		 */
 		
-		opticalFlowSparse.updateWithNewImage(undistorted_frame);
+		opticalFlowSparse.updateWithNewImage(frame);
  		ROS_INFO("OPFLOW: Steps %i , track success: %f", opticalFlowSparse.getStepCounter(), opticalFlowSparse.getTrackSuccessRatio());
 		
 		/*
